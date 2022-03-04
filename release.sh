@@ -3,7 +3,7 @@ GIT_REPO=$(jq -r '.git_repo' metadata.json)
 GIT_DOMAIN=$(jq -r '.git_domain' metadata.json)
 GIT_USER=$(jq -r '.git_user' metadata.json)
 BINARY_PREFIX=$(jq -r '.binary_prefix' metadata.json)
-LATEST_SCRIPT_TAG=$(curl -v https://api.${GIT_DOMAIN}/repos/${GIT_USER}/${GIT_REPO}/releases/latest | jq -r '.tag_name')
+LATEST_SCRIPT_TAG=$(curl -s https://api.${GIT_DOMAIN}/repos/${GIT_USER}/${GIT_REPO}/releases/latest | jq -r '.tag_name')
 test=$(curl -s https://api.${GIT_DOMAIN}/repos/${GIT_USER}/${GIT_REPO}/releases/latest)
 echo "test var $test"
 LOCAL_TAG_NAME=$(jq -r '.script_version' metadata.json)
@@ -66,7 +66,7 @@ echo "Looks good?"
                 for BINARY in ${BINARIES[@]}; do
                     URL="$edited?name=$BINARY&label=$BINARY"
                     echo "uploading $BINARY to $URL"
-                    curl -T $BINARY "$URL" -vH "Content-type: application/x-binary" -u $GIT_USER:$GIT_TOKEN
+                    curl -T $BINARY "$URL" -H "Content-type: application/x-binary" -u $GIT_USER:$GIT_TOKEN
                 done
                 rm release-response.json
                 rm $BINARY_PREFIX-*

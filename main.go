@@ -64,16 +64,37 @@ func main() {
 			d1 := []byte("hello\ngo\n")
 			err := os.WriteFile(preFolder+"/"+path, d1, 0644)
 			CheckErr(err, false, "Failed to create file:"+path, Trace())
+			if err != nil {
+				removePrior(preFolder+"/"+path, lastpart[len(lastpart)-1], err.Error())
+				err := os.WriteFile(preFolder+"/"+path, d1, 0644)
+				CheckErr(err, false, "Failed to create remedial file:"+path, Trace())
+			}
 		} else {
 			Log.Info("folder:", path)
 			err := os.Mkdir(preFolder+"/"+path, 0755)
 			CheckErr(err, false, "Failed to create folder:"+path, Trace())
+			if err != nil {
+				removePrior(preFolder+"/"+path, lastpart[len(lastpart)-1], err.Error())
+			}
 		}
 		Log.Trace("final path:", path, " orginal:", line)
 	}
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
+	}
+}
+
+func removePrior(path, lastpart, errString string) {
+	if strings.Contains(errString, "ot a directory") {
+		//mac uses lower case N, linux uses capital N delete prior folder
+		Log.Error("error with prior directory, attempting delete")
+		paths := strings.Split(path, "/"+lastpart)
+		Log.Debug("Removing path:", paths[0])
+		err := os.Remove(paths[0])
+		CheckErr(err, false, "Failed to remove incorrect file:"+paths[0], Trace())
+		err = os.Mkdir(paths[0], 0755)
+		CheckErr(err, false, "Failed to create remedial folder:"+paths[0], Trace())
 	}
 }
 
