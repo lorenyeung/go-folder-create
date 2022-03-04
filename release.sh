@@ -68,13 +68,8 @@ echo "Looks good?"
                     echo "uploading $BINARY to $URL"
                     curl -T $BINARY "$URL" -vH "Content-type: application/x-binary" -u $GIT_USER:$GIT_TOKEN
                 done
-                #TEMPLATE="templates.tar.gz"
-                #tar -cvzf $TEMPLATE frontend/dist templates valuestemplates
-                #echo $edited
-                #curl -T $TEMPLATE "$edited?name=$TEMPLATE&label=$TEMPLATE" -H "Content-Type: application/x-gzip" -u $GIT_USER:$GIT_TOKEN
-                #rm release-response.json
+                rm release-response.json
                 rm $BINARY_PREFIX-*
-                #rm $TEMPLATE
                 break;;
             No) echo "OK" ; break;;
         esac

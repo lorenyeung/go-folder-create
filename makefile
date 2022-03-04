@@ -10,8 +10,8 @@ PROJECT := $(shell jq -r '.git_repo' metadata.json)
 GIT_COMMIT := $(shell git rev-list -1 HEAD)
 
 build:
-	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o $(BINARY)-linux-x64 -ldflags "-X $(DOMAIN)/$(USER)/$(PROJECT)/main.GitCommit=$(GIT_COMMIT) -X $(PROJECT)/main.Version=$(VERSION)" main.go
-	GOOS=darwin GOARCH=$(GOARCH) go build -o $(BINARY)-darwin-x64 -ldflags "-X $(DOMAIN)/$(USER)/$(PROJECT)/main.GitCommit=$(GIT_COMMIT) -X $(PROJECT)/main.Version=$(VERSION)" main.go
+	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o $(BINARY)-linux-x64 -ldflags "-X main.GitCommit=$(GIT_COMMIT) -X main.Version=$(VERSION)" main.go
+	GOOS=darwin GOARCH=$(GOARCH) go build -o $(BINARY)-darwin-x64 -ldflags "-X main.GitCommit=$(GIT_COMMIT) -X main.Version=$(VERSION)" main.go
 
 clean:
 	rm orchestrate-darwin-x64 orchestrate-linux-x64 
