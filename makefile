@@ -2,14 +2,15 @@ GOOS=linux
 GOARCH=amd64
 VERSION := $(shell jq -r '.script_version' metadata.json)
 BINARY := $(shell jq -r '.binary_prefix' metadata.json)
-PROJECT=github.com/lorenyeung/go-folder-create
+DOMAIN := $(shell jq -r '.git_domain' metadata.json)
+PROJECT := $(shell jq -r '.git_repo' metadata.json)
 .PHONY: build
 
 GIT_COMMIT := $(shell git rev-list -1 HEAD)
 
 build:
-	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o $(BINARY)-linux-x64 -ldflags "-X $(PROJECT)/main.GitCommit=$(GIT_COMMIT) -X $(PROJECT)/main.Version=$(VERSION)" main.go
-	GOOS=darwin GOARCH=$(GOARCH) go build -o $(BINARY)-darwin-x64 -ldflags "-X $(PROJECT)/main.GitCommit=$(GIT_COMMIT) -X $(PROJECT)/main.Version=$(VERSION)" main.go
+	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o $(BINARY)-linux-x64 -ldflags "-X $(DOMAIN)/$(PROJECT)/main.GitCommit=$(GIT_COMMIT) -X $(PROJECT)/main.Version=$(VERSION)" main.go
+	GOOS=darwin GOARCH=$(GOARCH) go build -o $(BINARY)-darwin-x64 -ldflags "-X $(DOMAIN)/$(PROJECT)/main.GitCommit=$(GIT_COMMIT) -X $(PROJECT)/main.Version=$(VERSION)" main.go
 
 clean:
 	rm orchestrate-darwin-x64 orchestrate-linux-x64 
