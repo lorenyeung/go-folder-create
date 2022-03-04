@@ -1,0 +1,5 @@
+module github.com/lorenyeung/go-folder-create
+
+go 1.16
+
+require github.com/sirupsen/logrus v1.8.1
