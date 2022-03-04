@@ -1,9 +1,10 @@
 #!/bin/bash
 GIT_REPO=$(jq -r '.git_repo' metadata.json)
 GIT_DOMAIN=$(jq -r '.git_domain' metadata.json)
+GIT_USER=$(jq -r '.git_user' metadata.json)
 BINARY_PREFIX=$(jq -r '.binary_prefix' metadata.json)
-LATEST_SCRIPT_TAG=$(curl -s https://api.${GIT_DOMAIN}/${GIT_REPO}/releases/latest | jq -r '.tag_name')
-test=$(curl -s https://api.${GIT_DOMAIN}/${GIT_REPO}/releases/latest)
+LATEST_SCRIPT_TAG=$(curl -v https://api.${GIT_DOMAIN}/repos/${GIT_USER}/${GIT_REPO}/releases/latest | jq -r '.tag_name')
+test=$(curl -s https://api.${GIT_DOMAIN}/repos/${GIT_USER}/${GIT_REPO}/releases/latest)
 echo "test var $test"
 LOCAL_TAG_NAME=$(jq -r '.script_version' metadata.json)
 LOCAL_NAME=$(echo "${LOCAL_TAG_NAME/v/}")
@@ -55,7 +56,7 @@ echo "Looks good?"
         case $yn in
             Yes)
                 echo $body > release.json 
-                curl -u $GIT_USER:$GIT_TOKEN -XPOST "https://api.${GIT_DOMAIN}/$GIT_REPO/releases" -H "Content-Type: application/json" -T release.json -o release-response.json
+                curl -u $GIT_USER:$GIT_TOKEN -XPOST "https://api.${GIT_DOMAIN}/repos/${GIT_USER}/${GIT_REPO}/releases" -H "Content-Type: application/json" -T release.json -o release-response.json
                 rm release.json
                 make build
                 BINARIES=("$BINARY_PREFIX-darwin-x64" "$BINARY_PREFIX-linux-x64")
@@ -65,15 +66,15 @@ echo "Looks good?"
                 for BINARY in ${BINARIES[@]}; do
                     URL="$edited?name=$BINARY&label=$BINARY"
                     echo "uploading $BINARY to $URL"
-                    curl -T $BINARY "$URL" -H "Content-type: application/x-binary" -u $GIT_USER:$GIT_TOKEN
+                    curl -T $BINARY "$URL" -vH "Content-type: application/x-binary" -u $GIT_USER:$GIT_TOKEN
                 done
-                TEMPLATE="templates.tar.gz"
-                tar -cvzf $TEMPLATE frontend/dist templates valuestemplates
-                echo $edited
-                curl -T $TEMPLATE "$edited?name=$TEMPLATE&label=$TEMPLATE" -H "Content-Type: application/x-gzip" -u $GIT_USER:$GIT_TOKEN
-                rm release-response.json
+                #TEMPLATE="templates.tar.gz"
+                #tar -cvzf $TEMPLATE frontend/dist templates valuestemplates
+                #echo $edited
+                #curl -T $TEMPLATE "$edited?name=$TEMPLATE&label=$TEMPLATE" -H "Content-Type: application/x-gzip" -u $GIT_USER:$GIT_TOKEN
+                #rm release-response.json
                 rm $BINARY_PREFIX-*
-                rm $TEMPLATE
+                #rm $TEMPLATE
                 break;;
             No) echo "OK" ; break;;
         esac

@@ -1,1 +1,1 @@
-{ "script_version": "v0.0.1", "git_repo": "go-folder-create", "git_domain":"github.com/lorenyeung","binary_prefix": "folder-create", "release_branch": "main" }
+{ "script_version": "v0.0.1", "git_repo": "go-folder-create", "git_domain":"github.com","git_user":"lorenyeung","binary_prefix": "folder-create", "release_branch": "main" }
